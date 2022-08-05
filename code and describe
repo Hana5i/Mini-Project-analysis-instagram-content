@@ -1,0 +1,67 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+
+#to know the first 5 data info
+data = pd.read_csv('instagram_reach_edit.csv')
+print(data.head())
+
+#Dataset Source: https://www.kaggle.com/datasets/rxsraghavagrawal/instagram-reach 
+#Code source   : https://thecleverprogrammer.com/2022/03/22/instagram-reach-analysis-using-python/
+
+#check null data and drop it
+data.isnull().sum()
+
+data =data.dropna()
+data.info()
+
+#analysis the likes vs hashtag and likes vs Hour
+#likes vs hashtag
+plt.figure(figsize=(10,8))
+plt.style.use('fivethirtyeight')
+plt.title("Distribution Impresive From Hastag")
+sns.displot(data['likes'])
+plt.show()
+
+#likes vs hour
+plt.figure(figsize=(10,8))
+plt.style.use('fivethirtyeight')
+plt.title("Distribution Impresive From Hour")
+sns.displot(data['Hour'])
+plt.show()
+
+#content analysis, about captions and hashtags
+#captions
+text = " ".join(i for i in data.Caption)
+stopwords = set(STOPWORDS)
+wordcloud = WordCloud(stopwords=stopwords, background_color="black").generate(text)
+plt.style.use('classic')
+plt.figure( figsize=(12,10))
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis("off")
+plt.show()
+
+#hashtag
+text = " ".join(i for i in data.Hashtags)
+stopwords = set(STOPWORDS)
+wordcloud = WordCloud(stopwords=stopwords, background_color="white").generate(text)
+plt.style.use('classic')
+plt.figure( figsize=(12,10))
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis("off")
+plt.show()
+
+#relationship between Likes and Followers
+figure= px.scatter(data_frame= data, x="Followers", 
+                   y="likes", size="likes", trendline="ols", 
+                   title="Relationship Between Likes and Followers")
+figure.show()
+
+#relationship between Likes and Hour
+figure= px.scatter(data_frame= data, x="Hour", 
+                   y="likes", size="likes", trendline="ols", 
+                   title="Relationship Between Likes and Time since posted")
+figure.show()
